@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from pickle import TRUE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
     'bootstrap4',
+    'social_django',
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -124,3 +128,24 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/sign-in'
 LOGIN_REDIRECT_URL = '/'
 
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+SOCIAL_AUTH_FACEBOOK_KEY = "392295216244044"
+SOCIAL_AUTH_FACEBOOK_SECRET = "36744e1065e0bfafe5d94d09d286e35b"
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id, name, email'
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = TRUE
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'aryan.gupta_cs19@gla.ac.in'
+EMAIL_HOST_PASSWORD = 'Aryan@1234'
+DEFAULT_FROM_EMAIL = 'Drop Ship <no-reply@dropship.localhost>'

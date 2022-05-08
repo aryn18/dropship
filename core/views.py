@@ -19,15 +19,18 @@ def sign_up(request):
     form = forms.SignUpForm()
 
     if request.method == 'POST':
-        form=forms.SignUpForm(request.POST)
+        form = forms.SignUpForm(request.POST)
+
         if form.is_valid():
-            email=form.cleaned_data.get('email').lower()
+            email = form.cleaned_data.get('email').lower()
             user = form.save(commit=False)
             user.username = email
             user.save()
-            login(request, user)
+
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('/')
+
     return render (request, 'sign_up.html',{
-        'form':form
+        'form': form
     })
     

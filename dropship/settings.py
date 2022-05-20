@@ -154,3 +154,5 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'aryan.gupta_cs19@gla.ac.in'
 EMAIL_HOST_PASSWORD = 'Aryan@1234'
 DEFAULT_FROM_EMAIL = 'Drop Ship <no-reply@dropship.localhost>'
+
+FIREBASE_ADMIN_CREDENTIAL = os.path.join(BASE_DIR, "dropship-f1ad9-firebase-adminsdk-sx5ku-071bcbe094.json")

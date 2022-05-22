@@ -158,3 +158,4 @@ DEFAULT_FROM_EMAIL = 'Drop Ship <no-reply@dropship.localhost>'
 FIREBASE_ADMIN_CREDENTIAL = os.path.join(BASE_DIR, "dropship-f1ad9-firebase-adminsdk-sx5ku-071bcbe094.json")
 STRIPE_API_PUBLIC_KEY = "pk_test_51L1W4mSItbhDnH7RuA5qbViqyR1iGOoBrdNXoSdgFRbz8VJT5YFssVW3Qj24ep4eLuE3pEvnyfHxDBXBgLV9FKfZ00of9MoXEs"
 STRIPE_API_SECRET_KEY = "sk_test_51L1W4mSItbhDnH7REM6oGGUx5GwmSsifwfJJkIe77ZlphODl90Yzyel2cLFy85C0haGrC1IWbbNpjjQhpSewLand008kGZzq36"
+GOOGLE_MAP_API_KEY = "AIzaSyDnFFBQo9GkvDdSgjf2T-r7z8LdaXYG_LA"

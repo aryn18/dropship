@@ -117,9 +117,23 @@ def payment_method_page(request):
 
 @login_required(login_url="/sign-in/?next=/customer/")
 def create_job_page(request):
+
     current_customer = request.user.customer
     if not request.user.customer.stripe_payment_method_id:
         return redirect(reverse('customer:payment_method'))
+
+    has_current_job = Job.objects.filter(
+        customer = current_customer,
+        status__in = [
+            Job.PROCESSING_STATUS,
+            Job.PICKING_STATUS,
+            Job.DELIVERING_STATUS
+        ]
+    ).exists()
+
+    if has_current_job:
+        messages.warning(request,'You currently have a processing job.')
+        return redirect(reverse("customer:current_jobs"))
 
     creating_job = Job.objects.filter(customer=current_customer, status = Job.CREATING_STATUS).last()
     step1_form = forms.JobCreatedStep1Form(instance=creating_job)
@@ -213,4 +227,38 @@ def create_job_page(request):
         "job": creating_job,
         "step": current_step,
         "GOOGLE_MAP_API_KEY": settings.GOOGLE_MAP_API_KEY
+    })
+
+@login_required(login_url="/sign-in/?next=/customer/")
+def current_jobs_page(request):
+    jobs = Job.objects.filter(
+        customer = request.user.customer,
+        status__in=[
+            Job.PROCESSING_STATUS,
+            Job.PICKING_STATUS,
+            Job.DELIVERING_STATUS
+        ]
+    )
+    return render(request, 'customer/jobs.html', {
+        "jobs":jobs
+    })
+
+@login_required(login_url="/sign-in/?next=/customer/")
+def archived_jobs_page(request):
+    jobs = Job.objects.filter(
+        customer = request.user.customer,
+        status__in=[
+            Job.COMPLETED_STATUS,
+            Job.CANCELED_STATUS
+        ]
+    )
+    return render(request, 'customer/jobs.html',{
+        "jobs":jobs
+    })
+
+@login_required(login_url="/sign-in/?next=/customer/")
+def job_page(request, job_id):
+    job = Job.objects.get(id=job_id)
+    return render (request, 'customer/job.html',{
+        "job": job
     })

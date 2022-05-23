@@ -259,6 +259,13 @@ def archived_jobs_page(request):
 @login_required(login_url="/sign-in/?next=/customer/")
 def job_page(request, job_id):
     job = Job.objects.get(id=job_id)
+
+    if request.method == "POST" and job.status == job.PROCESSING_STATUS:
+        job.status = job.CANCELED_STATUS
+        job.save()
+        return redirect(reverse('customer:archived_jobs'))
+
     return render (request, 'customer/job.html',{
-        "job": job
+        "job": job,
+        "GOOGLE_MAP_API_KEY": settings.GOOGLE_MAP_API_KEY
     })

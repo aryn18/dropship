@@ -1,4 +1,5 @@
 {% extends 'customer/base.html' %}
+{% load static %}
 
 {% block head %}
 
@@ -19,6 +20,66 @@
     }
 </style>
 
+<script src = "https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_KEY }}&callback=initmap&libraries=places&v=weekly" defer></script>
+
+<script>
+    var pickupLat = parseFloat(" {{ job.pickup_lat }} ");
+    var pickupLng = parseFloat(" {{ job.pickup_lng }} ");
+    var deliveryLat = parseFloat(" {{ job.delivery_lat }} ");
+    var deliveryLng = parseFloat(" {{ job.delivery_lng }} ");
+
+    function initmap(){
+        const directionsservice = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer();
+        const map = new google.maps.Map(document.getElementById("map"),{
+            zoom: 7,
+            center: { lat: 41.85, lng:-87.65},
+        });
+        directionsRenderer.setMap(map);
+
+        calculateAndDisplayRoute(map, directionsService, directionsRenderer);
+    }
+
+    function calculateAndDisplayRoute(map, directionsService, directionsRenderer) {
+        directionsService.route(
+            {
+            origin: new google.maps.LatLng(pickupLat, pickupLng),
+            destination: new google.maps.LatLng(deliveryLat, deliveryLng),
+            travelMode: google.maps.TravelMode.DRIVING,
+            },
+            (response, status) => {
+                if(status === "OK"){
+                    new google.maps.DirectionsRenderer({
+                        map: map,
+                        directions: response,
+                        suppressMarkers: true,
+                        polylineOptions: {
+                            strokeColor: "#000",
+                            strokeWeight: 5,
+                            strokeOpacity: 0.8
+                        }
+                    });
+
+                    var leg = response.routes[0].legs[0];
+                    new google.maps.Marker({
+                        position: leg.start_location,
+                        map: map,
+                        icon: "{% static 'img/start.jpg' %}"
+                    });
+
+                    new google.maps.Marker({
+                        position: leg.end_location,
+                        map: map,
+                        icon: "{% static 'img/end.png' %}"
+                    });
+                }else{
+                    window.alert("Directions request failed due to "+ status);
+                }
+            }
+        );
+    }
+</script>
+
 {% endblock %}
 
 {% block main %}
@@ -27,6 +88,14 @@
 <div class="media mb-4">
     <img src="{{ job.photo.url }}" class="rounded-lg mr-3" width="100" height="150">
     <div class="media-body">
+
+        {% if job.status == 'processing' %}
+        <form method="POST" class = "float-right">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning">Cancel Job</button>
+        </form>
+        {% endif %}
+
         <h4>{{ job.name }}</h4>
         <p class="text-secondary"> {{ job.discription }}</p>
 
@@ -100,5 +169,19 @@
         </div>  
     </div>
   </div>
+</div>
+
+<!-- MAP AREA  -->
+<div class="d-flex justify-content-between">
+    <b class="text-secondary">TRACK DELIVERY</b>
+    <div>
+        <span class="badge badge-warning">{{ job.get_status_display }}</span>
+    </div>
+</div>
+
+<div class="card bg-white mt-2">
+    <div class="card-body p-0">
+        <div id="map" style="height: 500px;"></div> 
+    </div>
 </div>
 {% endblock %}

@@ -8,7 +8,7 @@ from django.conf.urls.static import static
 from core import views
 
 from core.customer import views as customer_views
-from core.courier import views as courier_views
+from core.courier import views as courier_views, apis as courier_apis
 
 customer_urlspatterns =[
     path('', customer_views.home, name="home"),
@@ -23,8 +23,12 @@ customer_urlspatterns =[
 ]
 
 
-couier_urlspatterns =[
-    path('', courier_views.home, name="home")
+courier_urlspatterns =[
+    path('', courier_views.home, name="home"),
+    path('jobs/available/', courier_views.available_jobs_page, name="available_jobs"),
+    path('jobs/available/<id>/', courier_views.available_job_page, name="available_job"),
+
+    path('api/jobs/available/', courier_apis.available_jobs_api, name = "available_jobs_api")
 ]
 
 
@@ -39,7 +43,7 @@ urlpatterns = [
     path('sign-up/', views.sign_up),
 
     path('customer/', include((customer_urlspatterns, 'customer'))),
-    path('courier/', include((couier_urlspatterns, 'courier'))),
+    path('courier/', include((courier_urlspatterns, 'courier'))),
 ]
 
 

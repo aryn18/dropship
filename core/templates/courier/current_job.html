@@ -145,6 +145,9 @@ defer></script>
                 </div>
                 $<h3 >{{ job.price }}</h3>
             </div>
+
+            <a href="{% url 'current_job_take_photo' job.id %}" class="btn btn-block btn-warning btn-md mt-3"></a>
+            {% if job.status == 'picking' %}Pickup{% else %}Drop-off{% endif %}
         </div>
     </div>
     {% else %}

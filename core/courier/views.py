@@ -47,3 +47,23 @@ def current_job_page(request):
         "job":job,
         "GOOGLE_MAP_API_KEY":settings.GOOGLE_MAP_API_KEY
     })
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def current_job_take_photo_page(request):
+    job = Job.objects.filter(
+        id = id,
+        courir=request.user.courier,
+        status__in=[
+            Job.PICKING_STATUS,
+            Job.DELIVERING_STATUS
+        ]
+    ).last()
+
+    if not job:
+        return redirect(reverse('courier:current_job'))
+    return render(request,'courier/current_job_take_photo.html',{
+    "job":job
+    })
+
+def job_complete_page(request):
+    return render (request, 'courier/job_complete.html')

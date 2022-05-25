@@ -1,3 +1,5 @@
+from django.contrib import messages
+from core.courier import forms
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -67,3 +69,43 @@ def current_job_take_photo_page(request):
 
 def job_complete_page(request):
     return render (request, 'courier/job_complete.html')
+
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def archived_jobs_page(request):
+    jobs = Job.objects.filter(
+        courier =  request.user.courier,
+        status=Job.COMPLETED_STATUS
+    )
+    return render(request,'courier/archived_jobs.html',{
+    "jobs":jobs
+})
+
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def profile_page(request):
+    jobs = Job.objects.filter(
+        courier = request.user.courier,
+        status=Job.COMPLETED_STATUS
+    )
+    total_earnings=round(sum(job.price for job in jobs)*0.8,2)
+    total_jobs = len(jobs)
+    total_km=sum(job.distance for job in jobs)
+    return render(request,'courier/profile.html',{
+        "total_earnings":total_earnings,
+        "total_jobs":total_jobs,
+        "total_km":total_km
+    })
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def payout_method_page(request):
+    payout_form=forms.PayoutForm(instance=request.user.courier)
+    if request.method =='POST':
+        payout_form=forms.PayoutForm(request.POST,instance=request.user.courier)
+        if payout_form.is_valid():
+            payout_form.save()
+            messages.success(request,"Payout address is updated.")
+            return redirect(reverse('courier:profile'))
+    return render(request,'courier/payout_method.html',{
+        "payout_form": payout_form
+    })

@@ -1,11 +1,11 @@
-
+from django.views.generic import TemplateView
 from venv import create
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
-from core import views
+from core import views, consumers
 
 from core.customer import views as customer_views
 from core.courier import views as courier_views, apis as courier_apis
@@ -33,9 +33,9 @@ courier_urlspatterns =[
     path('jobs/archived', courier_views.archived_jobs_page, name="archived_jobs"),
     path('jobs/profile', courier_views.profile_page, name="profile"),
     path('jobs/payout_method', courier_views.payout_method_page, name="payout_method"),
-
     path('api/jobs/available/', courier_apis.available_jobs_api, name = "available_jobs_api"),
     path('api/jobs/current/<id>/update/', courier_apis.current_job_update_api, name = "current_job_update_api"),
+    path('api/fcm-token/update/', courier_apis.fcm_token_update_api, name = "fcm_token_update_api"),
 
 ]
 
@@ -52,8 +52,13 @@ urlpatterns = [
 
     path('customer/', include((customer_urlspatterns, 'customer'))),
     path('courier/', include((courier_urlspatterns, 'courier'))),
+    path('firbase-messaging-sw.js',(TemplateView.as_view(template_name="firebase-messaging-sw.js", content_type = "application/javascript",))),
+
 ]
 
+websocket_urlpatterns = [
+    path('ws/jobs/<job_id>/', consumers.JobConsumer.as_asgi())
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

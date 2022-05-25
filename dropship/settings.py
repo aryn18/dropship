@@ -27,7 +27,7 @@ SECRET_KEY = '^46vzw_8*s^fqce94^afy_13f*)gqsf@_=o=eft_7_iz_&ccoi'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'social_django',
     'core.apps.CoreConfig',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -162,3 +163,17 @@ GOOGLE_MAP_API_KEY = "AIzaSyDnFFBQo9GkvDdSgjf2T-r7z8LdaXYG_LA"
 PAYPAL_MODE = "sandbox"
 PAYPAL_CLIENT_ID = "AUN2QyvcrQDuVqx8ZK_g9sNi9s-d2JhvvvgMee_HfofS_HVwGLvyzI6Kr0RAeEpameakW3UXNc5rQ8vI"
 PAYPAL_CLIENT_SECRET = "ENGaP3bR5yApwHddJpYfG-PPd2r-vjToCHpB4DIZ-YD7i_6dvUIZgGnF2RYWFoSoSIdMeElHsystX6d-"
+
+NOTIFICATION_URL = ""
+ASGI_APPLICATION = "dropship.asgi.application"
+
+# Channels
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

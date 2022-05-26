@@ -1,0 +1,13 @@
+{
+    "short_name": "Drop Ship",
+    "name": "Welcome to Drop Ship",
+    "description":"The best place for shipping",
+    "icons":[{
+        "src":"/static/img/logo.png",
+        "type":"image/png",
+        "sizes":"512x512"
+    }
+],
+"start_url":"/courier/",
+"display":"standalone"
+}
